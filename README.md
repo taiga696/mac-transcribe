@@ -1,5 +1,9 @@
 # mac-transcribe
 
+[English README is here](README_EN.md)
+
+---
+
 Macの「ダウンロード」フォルダに音声ファイルを置くだけで、自動で文字起こししてくれるローカル完結ツール。
 すべて無料・オープンソース。音声データが外部サーバーに送られることはありません。
 
@@ -21,7 +25,7 @@ Macの「ダウンロード」フォルダに音声ファイルを置くだけ�
 ## インストール
 
 ```bash
-git clone https://github.com/<ユーザー名>/mac-transcribe.git
+git clone https://github.com/taiga696/mac-transcribe.git
 cd mac-transcribe
 ./setup.sh
 ```
@@ -101,7 +105,7 @@ launchctl kickstart -k gui/$(id -u)/local.transcribe-watcher
 
 ## 技術スタック
 
-- [mlx-whisper](https://github.com/ml-explore/mlx-examples) — Apple Silicon GPU 推論（デフォルト）
+- [mlx-whisper](https://github.com/ml-explore/mlx-whisper) — Apple Silicon GPU 推論（デフォルト）
 - [faster-whisper](https://github.com/SYSTRAN/faster-whisper) — CPU 推論（互換用）
 - [pyannote.audio](https://github.com/pyannote/pyannote-audio) — 話者分離
 - [watchdog](https://github.com/gorakhargosh/watchdog) — フォルダ監視

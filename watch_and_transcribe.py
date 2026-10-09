@@ -4,7 +4,7 @@ watch_and_transcribe.py — Downloads の音声ファイルを監視して自動
 
 新しい .m4a / .wav / .mp3 / .flac / .aac が Downloads に置かれたら、
 録音完了を待ってから自動で transcribe を実行する。
-出力は WorkBuddy の outputs ディレクトリに保存。
+出力は元音声と同じディレクトリ（Downloads）に .md ファイルとして生成。
 
 Usage:
     python watch_and_transcribe.py             # フォアグラウンドで実行
