@@ -1,0 +1,63 @@
+#!/bin/zsh
+# transcribe — Terminal-based audio transcription with speaker diarization
+#
+# Portable wrapper. Expects:
+#   - Python venv at ~/transcribe-env (override: TRANSCRIBE_PYBIN env var)
+#   - transcribe.py at ~/transcribe/transcribe.py (override: TRANSCRIBE_PY env var)
+
+PYBIN="${TRANSCRIBE_PYBIN:-$HOME/transcribe-env/bin/python}"
+TRANSCRIBE_PY="${TRANSCRIBE_PY:-$HOME/transcribe/transcribe.py}"
+
+if [[ ! -x "${PYBIN}" ]]; then
+    echo "ERROR: Python venv not found at ${PYBIN}" >&2
+    echo "       Run setup.sh first, or set TRANSCRIBE_PYBIN." >&2
+    exit 1
+fi
+
+if [[ ! -f "${TRANSCRIBE_PY}" ]]; then
+    echo "ERROR: transcribe.py not found at ${TRANSCRIBE_PY}" >&2
+    echo "       Run setup.sh first, or set TRANSCRIBE_PY." >&2
+    exit 1
+fi
+
+# --- Pull HF_TOKEN from huggingface_hub storage if env var not set ---
+if [[ -z "${HF_TOKEN}" && -z "${HUGGING_FACE_HUB_TOKEN}" ]]; then
+    _TOKEN=$("${PYBIN}" - <<'PY' 2>/dev/null
+import os
+try:
+    from huggingface_hub import get_token
+    t = get_token()
+    if t:
+        print(t)
+        raise SystemExit
+except SystemExit:
+    raise
+except Exception:
+    pass
+try:
+    from huggingface_hub import HfApi
+    t = HfApi().token
+    if t:
+        print(t)
+        raise SystemExit
+except SystemExit:
+    raise
+except Exception:
+    pass
+try:
+    token_path = os.path.expanduser("~/.cache/huggingface/token")
+    if os.path.exists(token_path):
+        with open(token_path) as f:
+            print(f.read().strip())
+except Exception:
+    pass
+PY
+    )
+    if [[ -n "${_TOKEN}" ]]; then
+        export HF_TOKEN="${_TOKEN}"
+    fi
+    unset _TOKEN
+fi
+
+# --- Forward all args to transcribe.py ---
+exec "${PYBIN}" "${TRANSCRIBE_PY}" "$@"
